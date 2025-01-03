@@ -1527,7 +1527,7 @@ famistudio_music_play:
     ; MMC3 edit
     ; My sound bank is 12
     sta $00
-    lda #$0C
+    lda #SOUND_BANK
     jsr _set_prg_8000
     lda $00
     @tmp = famistudio_r0
@@ -1763,6 +1763,8 @@ famistudio_music_play:
 .endif
 
 @skip:
+    lda #$00
+    jsr _set_prg_8000
     rts
 ;======================================================================================================================
 ; FAMISTUDIO_MUSIC_PAUSE (public)
@@ -3908,7 +3910,6 @@ famistudio_advance_channel_with_delays:
 ;======================================================================================================================
 
 famistudio_update:
-
     @pitch_env_type = famistudio_r0
     @temp_pitch     = famistudio_r1
     @tempo_env_ptr  = famistudio_ptr0
@@ -4438,7 +4439,6 @@ famistudio_update:
     pla
     sta famistudio_ptr0_lo
 .endif
-
     rts
 
 ;======================================================================================================================

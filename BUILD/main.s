@@ -11,10 +11,22 @@
 	.importzp	tmp1, tmp2, tmp3, tmp4, ptr1, ptr2, ptr3, ptr4
 	.macpack	longbranch
 	.forceimport	__STARTUP__
+	.import		_pal_fade_to
+	.import		_pal_all
+	.import		_pal_clear
 	.import		_ppu_wait_nmi
 	.import		_ppu_off
 	.import		_ppu_on_all
+	.import		_oam_clear
 	.import		_oam_size
+	.import		_bank_bg
+	.import		_vram_adr
+	.import		_vram_unrle
+	.import		_delay
+	.export		_intro1
+	.export		_intro2
+	.export		_story_pal
+	.export		_intro_text1
 	.export		_bankLevel
 	.export		_bankBuffer
 	.export		_banked_call
@@ -23,14 +35,751 @@
 	.import		_set_prg_8000
 	.import		_get_prg_8000
 	.import		_famistudio_music_play
-	.export		_irq_array
-	.export		_double_buffer
+	.export		_temp0
 	.export		_wram_array
+	.export		_play_story_cut
 	.export		_main
+
+.segment	"DATA"
+
+_temp0:
+	.dword	$00000000
 
 .segment	"RODATA"
 
+.segment	"BANK0"
+_intro1:
+	.byte	$01
+	.byte	$80
+	.byte	$01
+	.byte	$42
+	.byte	$81
+	.byte	$82
+	.byte	$01
+	.byte	$17
+	.byte	$BB
+	.byte	$80
+	.byte	$01
+	.byte	$05
+	.byte	$83
+	.byte	$84
+	.byte	$01
+	.byte	$04
+	.byte	$85
+	.byte	$86
+	.byte	$87
+	.byte	$88
+	.byte	$84
+	.byte	$01
+	.byte	$06
+	.byte	$BC
+	.byte	$BD
+	.byte	$BE
+	.byte	$84
+	.byte	$01
+	.byte	$04
+	.byte	$BF
+	.byte	$80
+	.byte	$01
+	.byte	$05
+	.byte	$83
+	.byte	$84
+	.byte	$01
+	.byte	$04
+	.byte	$89
+	.byte	$8A
+	.byte	$8B
+	.byte	$8C
+	.byte	$8D
+	.byte	$84
+	.byte	$01
+	.byte	$04
+	.byte	$C0
+	.byte	$C1
+	.byte	$9C
+	.byte	$C2
+	.byte	$C3
+	.byte	$84
+	.byte	$01
+	.byte	$03
+	.byte	$BF
+	.byte	$80
+	.byte	$01
+	.byte	$05
+	.byte	$83
+	.byte	$84
+	.byte	$01
+	.byte	$03
+	.byte	$8E
+	.byte	$84
+	.byte	$01
+	.byte	$03
+	.byte	$8F
+	.byte	$84
+	.byte	$01
+	.byte	$04
+	.byte	$C4
+	.byte	$9C
+	.byte	$01
+	.byte	$02
+	.byte	$C5
+	.byte	$84
+	.byte	$01
+	.byte	$03
+	.byte	$BF
+	.byte	$80
+	.byte	$01
+	.byte	$05
+	.byte	$83
+	.byte	$84
+	.byte	$01
+	.byte	$03
+	.byte	$90
+	.byte	$91
+	.byte	$84
+	.byte	$84
+	.byte	$92
+	.byte	$93
+	.byte	$84
+	.byte	$01
+	.byte	$04
+	.byte	$C6
+	.byte	$C7
+	.byte	$C8
+	.byte	$C9
+	.byte	$CA
+	.byte	$CB
+	.byte	$84
+	.byte	$01
+	.byte	$02
+	.byte	$BF
+	.byte	$80
+	.byte	$01
+	.byte	$05
+	.byte	$83
+	.byte	$84
+	.byte	$01
+	.byte	$03
+	.byte	$94
+	.byte	$95
+	.byte	$96
+	.byte	$97
+	.byte	$98
+	.byte	$99
+	.byte	$84
+	.byte	$01
+	.byte	$04
+	.byte	$CC
+	.byte	$CD
+	.byte	$CE
+	.byte	$CF
+	.byte	$D0
+	.byte	$D1
+	.byte	$84
+	.byte	$01
+	.byte	$02
+	.byte	$BF
+	.byte	$80
+	.byte	$01
+	.byte	$05
+	.byte	$83
+	.byte	$84
+	.byte	$01
+	.byte	$03
+	.byte	$9A
+	.byte	$9B
+	.byte	$9C
+	.byte	$01
+	.byte	$02
+	.byte	$9D
+	.byte	$84
+	.byte	$01
+	.byte	$05
+	.byte	$D2
+	.byte	$D3
+	.byte	$D4
+	.byte	$D5
+	.byte	$84
+	.byte	$84
+	.byte	$D6
+	.byte	$84
+	.byte	$BF
+	.byte	$80
+	.byte	$01
+	.byte	$05
+	.byte	$83
+	.byte	$84
+	.byte	$01
+	.byte	$03
+	.byte	$9E
+	.byte	$9F
+	.byte	$9C
+	.byte	$01
+	.byte	$02
+	.byte	$A0
+	.byte	$84
+	.byte	$01
+	.byte	$04
+	.byte	$D7
+	.byte	$9C
+	.byte	$01
+	.byte	$02
+	.byte	$D8
+	.byte	$84
+	.byte	$D9
+	.byte	$DA
+	.byte	$84
+	.byte	$BF
+	.byte	$80
+	.byte	$01
+	.byte	$05
+	.byte	$83
+	.byte	$84
+	.byte	$01
+	.byte	$02
+	.byte	$A1
+	.byte	$A2
+	.byte	$9C
+	.byte	$01
+	.byte	$03
+	.byte	$A3
+	.byte	$A4
+	.byte	$84
+	.byte	$01
+	.byte	$03
+	.byte	$DB
+	.byte	$9C
+	.byte	$01
+	.byte	$02
+	.byte	$DC
+	.byte	$DD
+	.byte	$DE
+	.byte	$84
+	.byte	$84
+	.byte	$BF
+	.byte	$80
+	.byte	$01
+	.byte	$05
+	.byte	$83
+	.byte	$84
+	.byte	$01
+	.byte	$02
+	.byte	$A5
+	.byte	$A6
+	.byte	$9C
+	.byte	$01
+	.byte	$03
+	.byte	$A7
+	.byte	$A8
+	.byte	$84
+	.byte	$01
+	.byte	$03
+	.byte	$DF
+	.byte	$9C
+	.byte	$01
+	.byte	$02
+	.byte	$E0
+	.byte	$E1
+	.byte	$84
+	.byte	$01
+	.byte	$02
+	.byte	$BF
+	.byte	$80
+	.byte	$01
+	.byte	$05
+	.byte	$83
+	.byte	$84
+	.byte	$01
+	.byte	$02
+	.byte	$A9
+	.byte	$AA
+	.byte	$9C
+	.byte	$01
+	.byte	$03
+	.byte	$AB
+	.byte	$AC
+	.byte	$84
+	.byte	$01
+	.byte	$02
+	.byte	$E2
+	.byte	$E3
+	.byte	$9C
+	.byte	$9C
+	.byte	$E4
+	.byte	$E5
+	.byte	$E6
+	.byte	$84
+	.byte	$01
+	.byte	$02
+	.byte	$BF
+	.byte	$80
+	.byte	$01
+	.byte	$05
+	.byte	$83
+	.byte	$84
+	.byte	$01
+	.byte	$03
+	.byte	$AD
+	.byte	$AE
+	.byte	$AF
+	.byte	$B0
+	.byte	$B1
+	.byte	$B2
+	.byte	$84
+	.byte	$01
+	.byte	$04
+	.byte	$E7
+	.byte	$E8
+	.byte	$E9
+	.byte	$EA
+	.byte	$EB
+	.byte	$84
+	.byte	$01
+	.byte	$03
+	.byte	$BF
+	.byte	$80
+	.byte	$01
+	.byte	$05
+	.byte	$83
+	.byte	$84
+	.byte	$01
+	.byte	$03
+	.byte	$B3
+	.byte	$B4
+	.byte	$B5
+	.byte	$B6
+	.byte	$B7
+	.byte	$B8
+	.byte	$84
+	.byte	$01
+	.byte	$04
+	.byte	$EC
+	.byte	$ED
+	.byte	$EE
+	.byte	$EF
+	.byte	$F0
+	.byte	$84
+	.byte	$01
+	.byte	$03
+	.byte	$BF
+	.byte	$80
+	.byte	$01
+	.byte	$05
+	.byte	$B9
+	.byte	$BA
+	.byte	$01
+	.byte	$17
+	.byte	$F1
+	.byte	$80
+	.byte	$01
+	.byte	$FE
+	.byte	$80
+	.byte	$01
+	.byte	$C3
+	.byte	$00
+	.byte	$01
+	.byte	$3E
+	.byte	$00
+	.byte	$01
+	.byte	$00
+_intro2:
+	.byte	$01
+	.byte	$60
+	.byte	$01
+	.byte	$42
+	.byte	$61
+	.byte	$62
+	.byte	$01
+	.byte	$05
+	.byte	$63
+	.byte	$64
+	.byte	$62
+	.byte	$01
+	.byte	$03
+	.byte	$B5
+	.byte	$B6
+	.byte	$B7
+	.byte	$62
+	.byte	$01
+	.byte	$08
+	.byte	$B8
+	.byte	$60
+	.byte	$01
+	.byte	$05
+	.byte	$65
+	.byte	$66
+	.byte	$67
+	.byte	$68
+	.byte	$66
+	.byte	$66
+	.byte	$69
+	.byte	$6A
+	.byte	$66
+	.byte	$6B
+	.byte	$6C
+	.byte	$66
+	.byte	$66
+	.byte	$B9
+	.byte	$BA
+	.byte	$BB
+	.byte	$66
+	.byte	$01
+	.byte	$08
+	.byte	$BC
+	.byte	$60
+	.byte	$01
+	.byte	$05
+	.byte	$6D
+	.byte	$6E
+	.byte	$6F
+	.byte	$70
+	.byte	$71
+	.byte	$72
+	.byte	$73
+	.byte	$74
+	.byte	$75
+	.byte	$76
+	.byte	$77
+	.byte	$66
+	.byte	$78
+	.byte	$BD
+	.byte	$BE
+	.byte	$BF
+	.byte	$66
+	.byte	$01
+	.byte	$08
+	.byte	$BC
+	.byte	$60
+	.byte	$01
+	.byte	$05
+	.byte	$79
+	.byte	$7A
+	.byte	$7B
+	.byte	$7C
+	.byte	$7D
+	.byte	$7E
+	.byte	$7F
+	.byte	$80
+	.byte	$60
+	.byte	$60
+	.byte	$81
+	.byte	$66
+	.byte	$82
+	.byte	$C0
+	.byte	$C1
+	.byte	$C2
+	.byte	$66
+	.byte	$01
+	.byte	$03
+	.byte	$C3
+	.byte	$66
+	.byte	$66
+	.byte	$C4
+	.byte	$66
+	.byte	$BC
+	.byte	$60
+	.byte	$01
+	.byte	$05
+	.byte	$83
+	.byte	$7C
+	.byte	$01
+	.byte	$02
+	.byte	$84
+	.byte	$85
+	.byte	$86
+	.byte	$87
+	.byte	$60
+	.byte	$60
+	.byte	$88
+	.byte	$89
+	.byte	$8A
+	.byte	$C5
+	.byte	$66
+	.byte	$01
+	.byte	$05
+	.byte	$C6
+	.byte	$C7
+	.byte	$C8
+	.byte	$C9
+	.byte	$66
+	.byte	$BC
+	.byte	$60
+	.byte	$01
+	.byte	$05
+	.byte	$83
+	.byte	$7C
+	.byte	$01
+	.byte	$02
+	.byte	$8B
+	.byte	$8C
+	.byte	$60
+	.byte	$01
+	.byte	$06
+	.byte	$CA
+	.byte	$CB
+	.byte	$66
+	.byte	$01
+	.byte	$03
+	.byte	$CC
+	.byte	$66
+	.byte	$CD
+	.byte	$CE
+	.byte	$CF
+	.byte	$66
+	.byte	$D0
+	.byte	$60
+	.byte	$01
+	.byte	$05
+	.byte	$83
+	.byte	$7C
+	.byte	$01
+	.byte	$02
+	.byte	$8D
+	.byte	$60
+	.byte	$01
+	.byte	$04
+	.byte	$8E
+	.byte	$8F
+	.byte	$90
+	.byte	$D1
+	.byte	$66
+	.byte	$01
+	.byte	$04
+	.byte	$D2
+	.byte	$D3
+	.byte	$D4
+	.byte	$D5
+	.byte	$D6
+	.byte	$D7
+	.byte	$D8
+	.byte	$60
+	.byte	$01
+	.byte	$05
+	.byte	$83
+	.byte	$7C
+	.byte	$01
+	.byte	$02
+	.byte	$91
+	.byte	$60
+	.byte	$01
+	.byte	$05
+	.byte	$92
+	.byte	$93
+	.byte	$66
+	.byte	$01
+	.byte	$03
+	.byte	$D9
+	.byte	$DA
+	.byte	$DB
+	.byte	$DC
+	.byte	$DD
+	.byte	$DE
+	.byte	$7C
+	.byte	$7C
+	.byte	$D8
+	.byte	$60
+	.byte	$01
+	.byte	$05
+	.byte	$83
+	.byte	$7C
+	.byte	$7C
+	.byte	$94
+	.byte	$60
+	.byte	$01
+	.byte	$06
+	.byte	$95
+	.byte	$96
+	.byte	$66
+	.byte	$DF
+	.byte	$E0
+	.byte	$E1
+	.byte	$E2
+	.byte	$60
+	.byte	$E3
+	.byte	$E4
+	.byte	$E5
+	.byte	$7C
+	.byte	$01
+	.byte	$02
+	.byte	$D8
+	.byte	$60
+	.byte	$01
+	.byte	$05
+	.byte	$83
+	.byte	$7C
+	.byte	$97
+	.byte	$98
+	.byte	$60
+	.byte	$01
+	.byte	$06
+	.byte	$99
+	.byte	$9A
+	.byte	$66
+	.byte	$66
+	.byte	$E6
+	.byte	$E7
+	.byte	$E8
+	.byte	$60
+	.byte	$60
+	.byte	$E9
+	.byte	$7C
+	.byte	$01
+	.byte	$03
+	.byte	$D8
+	.byte	$60
+	.byte	$01
+	.byte	$05
+	.byte	$83
+	.byte	$7C
+	.byte	$9B
+	.byte	$9C
+	.byte	$60
+	.byte	$01
+	.byte	$07
+	.byte	$9D
+	.byte	$66
+	.byte	$01
+	.byte	$02
+	.byte	$EA
+	.byte	$EB
+	.byte	$60
+	.byte	$01
+	.byte	$02
+	.byte	$EC
+	.byte	$ED
+	.byte	$7C
+	.byte	$7C
+	.byte	$D8
+	.byte	$60
+	.byte	$01
+	.byte	$05
+	.byte	$83
+	.byte	$7C
+	.byte	$7C
+	.byte	$9E
+	.byte	$9F
+	.byte	$A0
+	.byte	$60
+	.byte	$01
+	.byte	$04
+	.byte	$A1
+	.byte	$A2
+	.byte	$66
+	.byte	$01
+	.byte	$03
+	.byte	$EE
+	.byte	$EF
+	.byte	$F0
+	.byte	$F1
+	.byte	$F2
+	.byte	$7C
+	.byte	$01
+	.byte	$02
+	.byte	$D8
+	.byte	$60
+	.byte	$01
+	.byte	$05
+	.byte	$83
+	.byte	$7C
+	.byte	$01
+	.byte	$02
+	.byte	$A3
+	.byte	$A4
+	.byte	$A5
+	.byte	$A6
+	.byte	$A7
+	.byte	$A8
+	.byte	$A9
+	.byte	$AA
+	.byte	$66
+	.byte	$01
+	.byte	$05
+	.byte	$F3
+	.byte	$F4
+	.byte	$F5
+	.byte	$F6
+	.byte	$7C
+	.byte	$01
+	.byte	$02
+	.byte	$D8
+	.byte	$60
+	.byte	$01
+	.byte	$05
+	.byte	$AB
+	.byte	$AC
+	.byte	$AD
+	.byte	$AE
+	.byte	$AF
+	.byte	$B0
+	.byte	$B1
+	.byte	$01
+	.byte	$02
+	.byte	$B2
+	.byte	$B3
+	.byte	$B4
+	.byte	$B1
+	.byte	$01
+	.byte	$04
+	.byte	$F7
+	.byte	$F8
+	.byte	$B1
+	.byte	$F9
+	.byte	$FA
+	.byte	$FB
+	.byte	$FC
+	.byte	$FD
+	.byte	$FE
+	.byte	$60
+	.byte	$01
+	.byte	$FE
+	.byte	$60
+	.byte	$01
+	.byte	$C3
+	.byte	$00
+	.byte	$01
+	.byte	$3E
+	.byte	$00
+	.byte	$01
+	.byte	$00
+_story_pal:
+	.byte	$0F
+	.byte	$0F
+	.byte	$07
+	.byte	$27
+	.byte	$0F
+	.byte	$30
+	.byte	$30
+	.byte	$30
+	.byte	$0F
+	.byte	$0F
+	.byte	$07
+	.byte	$27
+	.byte	$0F
+	.byte	$30
+	.byte	$30
+	.byte	$30
+	.byte	$0F
+	.byte	$0F
+	.byte	$07
+	.byte	$27
+	.byte	$0F
+	.byte	$30
+	.byte	$30
+	.byte	$30
+	.byte	$0F
+	.byte	$30
+	.byte	$30
+	.byte	$30
+	.byte	$0F
+	.byte	$0F
+	.byte	$07
+	.byte	$27
+_intro_text1:
+	.byte	$61,$61,$61,$61,$61,$00
+.segment	"CODE"
 .segment	"STARTUP"
+.segment	"BANK0"
+.segment	"CODE"
 
 .segment	"BSS"
 
@@ -38,10 +787,6 @@ _bankLevel:
 	.res	1,$00
 _bankBuffer:
 	.res	10,$00
-_irq_array:
-	.res	32,$00
-_double_buffer:
-	.res	32,$00
 .segment	"XRAM"
 _wram_array:
 	.res	8192,$00
@@ -163,20 +908,120 @@ L0002:	rts
 .endproc
 
 ; ---------------------------------------------------------------
+; void __near__ play_story_cut (void)
+; ---------------------------------------------------------------
+
+.segment	"BANK0"
+
+.proc	_play_story_cut: near
+
+.segment	"BANK0"
+
+;
+; ppu_off();
+;
+	jsr     _ppu_off
+;
+; pal_clear();
+;
+	jsr     _pal_clear
+;
+; set_prg_8000(0);
+;
+	lda     #$00
+	jsr     _set_prg_8000
+;
+; pal_all(story_pal);
+;
+	lda     #<(_story_pal)
+	ldx     #>(_story_pal)
+	jsr     _pal_all
+;
+; vram_adr(NAMETABLE_A);
+;
+	ldx     #$20
+	lda     #$00
+	jsr     _vram_adr
+;
+; vram_unrle(intro1);
+;
+	lda     #<(_intro1)
+	ldx     #>(_intro1)
+	jsr     _vram_unrle
+;
+; ppu_wait_nmi();
+;
+	jsr     _ppu_wait_nmi
+;
+; ppu_on_all();
+;
+	jsr     _ppu_on_all
+;
+; delay(120);
+;
+	lda     #$78
+	jsr     _delay
+;
+; delay(120);
+;
+	lda     #$78
+	jsr     _delay
+;
+; pal_fade_to(4, 0);
+;
+	lda     #$04
+	jsr     pusha
+	lda     #$00
+	jsr     _pal_fade_to
+;
+; ppu_off();
+;
+	jsr     _ppu_off
+;
+; bank_bg(1);
+;
+	lda     #$01
+	jsr     _bank_bg
+;
+; vram_adr(NAMETABLE_A);
+;
+	ldx     #$20
+	lda     #$00
+	jsr     _vram_adr
+;
+; vram_unrle(intro2);
+;
+	lda     #<(_intro2)
+	ldx     #>(_intro2)
+	jsr     _vram_unrle
+;
+; ppu_wait_nmi();
+;
+	jsr     _ppu_wait_nmi
+;
+; ppu_on_all();
+;
+	jsr     _ppu_on_all
+;
+; pal_fade_to(0, 4);
+;
+	lda     #$00
+	jsr     pusha
+	lda     #$04
+	jmp     _pal_fade_to
+
+.endproc
+
+; ---------------------------------------------------------------
 ; void __near__ main (void)
 ; ---------------------------------------------------------------
 
-.segment	"STARTUP"
+.segment	"CODE"
 
 .proc	_main: near
 
-.segment	"STARTUP"
+.segment	"CODE"
 
-;
-; famistudio_music_play(0);
-;
-	lda     #$00
-	jsr     _famistudio_music_play
 ;
 ; ppu_off();
 ;
@@ -191,9 +1036,26 @@ L0002:	rts
 ;
 	jsr     _ppu_on_all
 ;
+; famistudio_music_play(0);
+;
+	lda     #$00
+	jsr     _famistudio_music_play
+;
+; banked_call(0, play_story_cut);
+;
+	lda     #$00
+	jsr     pusha
+	lda     #<(_play_story_cut)
+	ldx     #>(_play_story_cut)
+	jsr     _banked_call
+;
+; oam_clear();
+;
+L0002:	jsr     _oam_clear
+;
 ; ppu_wait_nmi();
 ;
-L0002:	jsr     _ppu_wait_nmi
+	jsr     _ppu_wait_nmi
 ;
 ; while(TRUE){
 ;

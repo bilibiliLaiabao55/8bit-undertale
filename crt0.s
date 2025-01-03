@@ -155,7 +155,6 @@ _exit:
     stx DMC_FREQ
     stx PPU_CTRL		;no NMI
 	
-	jsr _disable_irq ;disable mmc3 IRQ
 	
 	;x is zero
 
@@ -260,10 +259,7 @@ clearRAM:
 	
 	
 
-	lda #4
-	jsr _pal_bright
-	jsr _pal_clear
-	jsr _oam_clear
+
 
     jsr zerobss
 	jsr	copydata
@@ -347,7 +343,11 @@ detectNTSC:
 	
 	lda #$00 ;PRG bank #0 at $8000, back to basic
 	jsr _set_prg_8000
-
+	jsr _disable_irq ;disable mmc3 IRQ
+	lda #4
+	jsr _pal_bright
+	jsr _pal_clear
+	jsr _oam_clear
 	jmp _main			;no parameters
 	
 	
@@ -392,6 +392,8 @@ sounds_data:
 
 
 .segment "CHARS"
+	.incbin "CHR/intro1.chr"
+	; .incbin "CHR/intro2.chr"
 ; the CHARS segment is much bigger, and I could have 
 ; incbin-ed many more chr files
 	

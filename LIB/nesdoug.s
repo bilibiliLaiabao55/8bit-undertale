@@ -130,10 +130,6 @@ _get_frame_count:
 	
 	
 	
-	
-;void __fastcall__ set_music_speed(unsigned char tempo);
-	
-	
 
 
 

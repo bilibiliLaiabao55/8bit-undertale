@@ -146,8 +146,10 @@ nmi:
     lda #(6 | A12_INVERT)
     sta $8000
     lda #SOUND_BANK
-    sta $8001
+    sta $8001 ;change bank at $8000-9fff
     jsr famistudio_update
+;if famitone update went long, we could be interrupted
+;by an IRQ below here...
     
 ;push to stack 
     lda mmc3_8000
@@ -169,6 +171,9 @@ nmi:
     tax
     pla
     rti
+
+
+
 
 
 
@@ -821,6 +826,8 @@ _vram_write:
     bne @1
 
     rts
+
+
 
 ;unsigned char __fastcall__ pad_poll(unsigned char pad);
 
