@@ -144,7 +144,7 @@ FAMISTUDIO_CFG_NTSC_SUPPORT  = 1
 
 ; Support for sound effects playback + number of SFX that can play at once.
 FAMISTUDIO_CFG_SFX_SUPPORT   = 1 
-FAMISTUDIO_CFG_SFX_STREAMS   = 2
+; FAMISTUDIO_CFG_SFX_STREAMS   = 2
 
 ; Blaarg's smooth vibrato technique. Eliminates phase resets ("pops") on square channels. 
 FAMISTUDIO_CFG_SMOOTH_VIBRATO = 1 
@@ -234,13 +234,13 @@ FAMISTUDIO_USE_DUTYCYCLE_EFFECT  = 1
 ; FAMISTUDIO_USE_INSTRUMENT_EXTENDED_RANGE = 1
 
 ; Must be enabled if your project uses the "Phase Reset" effect.
-; FAMISTUDIO_USE_PHASE_RESET = 1
+FAMISTUDIO_USE_PHASE_RESET = 1
 
 ; Must be enabled if your project uses the FDS expansion and at least one instrument with FDS Auto-Mod enabled.
 ; FAMISTUDIO_USE_FDS_AUTOMOD  = 1
 
 .endif
-FAMISTUDIO_DPCM_OFF = 0
+; FAMISTUDIO_DPCM_OFF = 0
 ; Memory location of the DPCM samples. Must be between $c000 and $ffc0, and a multiple of 64.
 .ifndef FAMISTUDIO_DPCM_OFF
     FAMISTUDIO_DPCM_OFF = $c000
@@ -6609,7 +6609,10 @@ famistudio_sfx_clear_channel:
 ;======================================================================================================================
 
 famistudio_sfx_play:
-
+    sta $00
+    lda #$0C
+    jsr _set_prg_8000
+    lda $00
     @effect_data_ptr = famistudio_ptr0
 
     asl a
@@ -6627,7 +6630,8 @@ famistudio_sfx_play:
     iny
     lda (@effect_data_ptr),y
     sta famistudio_sfx_ptr_hi,x ; This write enables the effect
-
+    lda #$00
+    jsr _set_prg_8000
     rts
 
 ;======================================================================================================================

@@ -75,7 +75,7 @@ void __fastcall__ famistudio_music_stop(void);
  */
 
 void __fastcall__ famistudio_update(void);
-
+#define FAMISTUDIO_CFG_SFX_SUPPORT
 #ifdef FAMISTUDIO_CFG_SFX_SUPPORT
 
 /**

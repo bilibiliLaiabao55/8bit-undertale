@@ -29,7 +29,6 @@
     .export _flush_vram_update2, _oam_set, _oam_get
 
 
-
 ;NMI handler
 
 nmi:
@@ -164,7 +163,7 @@ nmi:
     pla
     sta mmc3_8000 ;restore this mmc3 register
     sta $8000 ;in case we interrupted the main code
-    
+
     pla
     tay
     pla

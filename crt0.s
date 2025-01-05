@@ -81,7 +81,6 @@ PPU_CTRL_VAR: 		.res 1
 PPU_CTRL_VAR1: 		.res 1
 PPU_MASK_VAR: 		.res 1
 RAND_SEED: 			.res 2
-FT_TEMP: 			.res 3
 
 TEMP: 				.res 11
 SPRID:				.res 1
@@ -337,8 +336,8 @@ detectNTSC:
 	lda 1
 	jsr famistudio_init
 
-	ldx #<sounds_data
-	ldy #>sounds_data
+	ldx #<sounds
+	ldy #>sounds
 	jsr famistudio_sfx_init
 	
 	lda #$00 ;PRG bank #0 at $8000, back to basic
@@ -369,12 +368,8 @@ detectNTSC:
 ; It could be moved into BANK12 if music data is small.
 	.include "MUSIC/famistudio_ca65.s"
 .segment "BANK12"	
-	
-music_data:
 	.include "MUSIC/music.s"
-
-sounds_data:
-	;.include "MUSIC/SoundFx.s"
+	.include "MUSIC/sounds.s"
 
 
 	
@@ -393,7 +388,7 @@ sounds_data:
 
 .segment "CHARS"
 	.incbin "CHR/intro1.chr"
-	; .incbin "CHR/intro2.chr"
+	.incbin "CHR/intro2.chr"
 ; the CHARS segment is much bigger, and I could have 
 ; incbin-ed many more chr files
 	
