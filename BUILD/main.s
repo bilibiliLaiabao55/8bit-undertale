@@ -14,6 +14,7 @@
 	.import		_get_pad_new
 	.import		_pal_fade_to
 	.import		_pal_all
+	.import		_pal_col
 	.import		_pal_clear
 	.import		_pal_bright
 	.import		_ppu_wait_nmi
@@ -21,6 +22,7 @@
 	.import		_ppu_on_all
 	.import		_oam_clear
 	.import		_oam_size
+	.import		_oam_meta_spr
 	.import		_pad_poll
 	.import		_vram_adr
 	.import		_vram_unrle
@@ -35,6 +37,35 @@
 	.export		_intro9
 	.export		_title
 	.export		_story_pal
+	.export		_frisk_0_data
+	.export		_frisk_1_data
+	.export		_frisk_2_data
+	.export		_frisk_3_data
+	.export		_frisk_4_data
+	.export		_frisk_5_data
+	.export		_frisk_6_data
+	.export		_frisk_7_data
+	.export		_frisk_8_data
+	.export		_frisk_9_data
+	.export		_frisk_up
+	.export		_frisk_left
+	.export		_frisk_right
+	.export		_frisk_down
+	.export		_frisk_all
+	.export		_umbrella_0_data
+	.export		_frisk_pal
+	.export		_temp0
+	.export		_temp1
+	.export		_pad_state_1
+	.export		_pad_new_1
+	.export		_frisk_x
+	.export		_frisk_y
+	.export		_frisk_face
+	.export		_frisk_frame_delay
+	.export		_frisk_frame
+	.export		_wram_array
+	.export		_pal_one
+	.export		_get_pad_all
 	.export		_bankLevel
 	.export		_bankBuffer
 	.export		_banked_call
@@ -42,6 +73,7 @@
 	.export		_bank_pop
 	.import		_set_prg_8000
 	.import		_get_prg_8000
+	.import		_set_chr_mode_0
 	.import		_set_chr_mode_2
 	.import		_set_chr_mode_3
 	.import		_set_chr_mode_4
@@ -49,18 +81,40 @@
 	.import		_famistudio_music_play
 	.import		_famistudio_music_stop
 	.import		_famistudio_sfx_play
-	.export		_temp0
-	.export		_temp1
-	.export		_pad_state_1
-	.export		_pad_new_1
-	.export		_wram_array
 	.export		_set_pal_intro
 	.export		_play_story_cut
 	.export		_play_title
+	.export		_set_frisk
+	.export		_update_frisk
 	.export		_main
 
 .segment	"DATA"
 
+_frisk_up:
+	.addr	_frisk_7_data
+	.addr	_frisk_8_data
+	.addr	_frisk_7_data
+	.addr	_frisk_9_data
+_frisk_left:
+	.addr	_frisk_3_data
+	.addr	_frisk_4_data
+	.addr	_frisk_3_data
+	.addr	_frisk_4_data
+_frisk_right:
+	.addr	_frisk_5_data
+	.addr	_frisk_6_data
+	.addr	_frisk_5_data
+	.addr	_frisk_6_data
+_frisk_down:
+	.addr	_frisk_0_data
+	.addr	_frisk_1_data
+	.addr	_frisk_0_data
+	.addr	_frisk_2_data
+_frisk_all:
+	.addr	_frisk_up
+	.addr	_frisk_down
+	.addr	_frisk_left
+	.addr	_frisk_right
 _temp0:
 	.dword	$00000000
 _temp1:
@@ -3542,32 +3596,447 @@ _story_pal:
 	.byte	$30
 	.byte	$30
 	.byte	$0F
-	.byte	$30
-	.byte	$30
+	.byte	$16
+	.byte	$00
 	.byte	$30
 	.byte	$0F
-	.byte	$06
-	.byte	$17
+	.byte	$30
+	.byte	$30
+	.byte	$30
+.segment	"BANK1"
+_frisk_0_data:
+	.byte	$00
+	.byte	$10
+	.byte	$07
+	.byte	$00
+	.byte	$00
+	.byte	$00
+	.byte	$01
+	.byte	$00
+	.byte	$08
+	.byte	$00
+	.byte	$03
+	.byte	$00
+	.byte	$10
+	.byte	$00
+	.byte	$05
+	.byte	$00
+	.byte	$08
+	.byte	$10
+	.byte	$09
+	.byte	$00
+	.byte	$10
+	.byte	$10
+	.byte	$0B
+	.byte	$00
+	.byte	$80
+_frisk_1_data:
+	.byte	$00
+	.byte	$0F
+	.byte	$0D
+	.byte	$00
+	.byte	$00
+	.byte	$FF
+	.byte	$01
+	.byte	$00
+	.byte	$08
+	.byte	$FF
+	.byte	$03
+	.byte	$00
+	.byte	$10
+	.byte	$FF
+	.byte	$05
+	.byte	$00
+	.byte	$08
+	.byte	$0F
+	.byte	$0F
+	.byte	$00
+	.byte	$10
+	.byte	$0F
+	.byte	$0B
+	.byte	$00
+	.byte	$80
+_frisk_2_data:
+	.byte	$00
+	.byte	$0F
+	.byte	$13
+	.byte	$00
+	.byte	$00
+	.byte	$FF
+	.byte	$01
+	.byte	$00
+	.byte	$08
+	.byte	$FF
+	.byte	$03
+	.byte	$00
+	.byte	$10
+	.byte	$FF
+	.byte	$05
+	.byte	$00
+	.byte	$08
+	.byte	$0F
+	.byte	$15
+	.byte	$00
+	.byte	$10
+	.byte	$0F
+	.byte	$0B
+	.byte	$00
+	.byte	$80
+_frisk_3_data:
+	.byte	$00
+	.byte	$00
+	.byte	$19
+	.byte	$00
+	.byte	$08
+	.byte	$00
+	.byte	$1B
+	.byte	$00
+	.byte	$10
+	.byte	$00
+	.byte	$1D
+	.byte	$00
+	.byte	$00
+	.byte	$10
+	.byte	$1F
+	.byte	$00
+	.byte	$08
+	.byte	$10
+	.byte	$21
+	.byte	$00
+	.byte	$80
+_frisk_4_data:
+	.byte	$00
+	.byte	$01
+	.byte	$19
+	.byte	$00
+	.byte	$08
+	.byte	$01
+	.byte	$1B
+	.byte	$00
+	.byte	$10
+	.byte	$01
+	.byte	$1D
+	.byte	$00
+	.byte	$00
+	.byte	$11
+	.byte	$23
+	.byte	$00
+	.byte	$08
+	.byte	$11
+	.byte	$25
+	.byte	$00
+	.byte	$80
+_frisk_5_data:
+	.byte	$0C
+	.byte	$00
+	.byte	$19
+	.byte	$40
+	.byte	$04
+	.byte	$00
+	.byte	$1B
+	.byte	$40
+	.byte	$FC
+	.byte	$00
+	.byte	$1D
+	.byte	$40
+	.byte	$0C
+	.byte	$10
+	.byte	$1F
+	.byte	$40
+	.byte	$04
+	.byte	$10
+	.byte	$21
+	.byte	$40
+	.byte	$80
+_frisk_6_data:
+	.byte	$0C
+	.byte	$01
+	.byte	$19
+	.byte	$40
+	.byte	$04
+	.byte	$01
+	.byte	$1B
+	.byte	$40
+	.byte	$FC
+	.byte	$01
+	.byte	$1D
+	.byte	$40
+	.byte	$0C
+	.byte	$11
+	.byte	$23
+	.byte	$40
+	.byte	$04
+	.byte	$11
+	.byte	$25
+	.byte	$40
+	.byte	$80
+_frisk_7_data:
+	.byte	$00
+	.byte	$00
 	.byte	$27
+	.byte	$00
+	.byte	$08
+	.byte	$00
+	.byte	$29
+	.byte	$00
+	.byte	$10
+	.byte	$00
+	.byte	$2B
+	.byte	$00
+	.byte	$00
+	.byte	$10
+	.byte	$2D
+	.byte	$00
+	.byte	$08
+	.byte	$10
+	.byte	$2F
+	.byte	$00
+	.byte	$10
+	.byte	$10
+	.byte	$31
+	.byte	$00
+	.byte	$80
+_frisk_8_data:
+	.byte	$00
+	.byte	$FF
+	.byte	$27
+	.byte	$00
+	.byte	$08
+	.byte	$FF
+	.byte	$29
+	.byte	$00
+	.byte	$10
+	.byte	$FF
+	.byte	$2B
+	.byte	$00
+	.byte	$00
+	.byte	$0F
+	.byte	$33
+	.byte	$00
+	.byte	$08
+	.byte	$0F
+	.byte	$35
+	.byte	$00
+	.byte	$10
+	.byte	$0F
+	.byte	$37
+	.byte	$00
+	.byte	$80
+_frisk_9_data:
+	.byte	$00
+	.byte	$FF
+	.byte	$27
+	.byte	$00
+	.byte	$08
+	.byte	$FF
+	.byte	$29
+	.byte	$00
+	.byte	$10
+	.byte	$FF
+	.byte	$2B
+	.byte	$00
+	.byte	$00
+	.byte	$0F
+	.byte	$39
+	.byte	$00
+	.byte	$08
+	.byte	$0F
+	.byte	$3B
+	.byte	$00
+	.byte	$10
+	.byte	$0F
+	.byte	$3D
+	.byte	$00
+	.byte	$80
+_umbrella_0_data:
+	.byte	$00
+	.byte	$00
+	.byte	$3E
+	.byte	$01
+	.byte	$08
+	.byte	$00
+	.byte	$40
+	.byte	$01
+	.byte	$10
+	.byte	$00
+	.byte	$42
+	.byte	$01
+	.byte	$18
+	.byte	$00
+	.byte	$40
+	.byte	$41
+	.byte	$20
+	.byte	$00
+	.byte	$3E
+	.byte	$41
+	.byte	$10
+	.byte	$10
+	.byte	$44
+	.byte	$01
+	.byte	$80
+_frisk_pal:
+	.byte	$0F
+	.byte	$06
+	.byte	$27
+	.byte	$2C
+.segment	"CODE"
 .segment	"CODE"
 .segment	"STARTUP"
 .segment	"BANK0"
+.segment	"BANK1"
 .segment	"CODE"
 
 .segment	"BSS"
 
-_bankLevel:
-	.res	1,$00
-_bankBuffer:
-	.res	10,$00
 .segment	"ZEROPAGE"
 _pad_state_1:
 	.res	1,$00
 _pad_new_1:
 	.res	1,$00
+_frisk_x:
+	.res	1,$00
+_frisk_y:
+	.res	1,$00
+_frisk_face:
+	.res	1,$00
+_frisk_frame_delay:
+	.res	1,$00
+_frisk_frame:
+	.res	1,$00
 .segment	"XRAM"
 _wram_array:
 	.res	8192,$00
+.segment	"BSS"
+_bankLevel:
+	.res	1,$00
+_bankBuffer:
+	.res	10,$00
+
+; ---------------------------------------------------------------
+; void __near__ pal_one (const unsigned char *pal_data, unsigned char pal_index)
+; ---------------------------------------------------------------
+
+.segment	"CODE"
+
+.proc	_pal_one: near
+
+.segment	"CODE"
+
+;
+; void pal_one(const unsigned char *pal_data, unsigned char pal_index){
+;
+	jsr     pusha
+;
+; pal_col(pal_index*4,   pal_data[0]);
+;
+	ldy     #$00
+	lda     (sp),y
+	asl     a
+	asl     a
+	jsr     pusha
+	ldy     #$03
+	lda     (sp),y
+	sta     ptr1+1
+	dey
+	lda     (sp),y
+	sta     ptr1
+	ldy     #$00
+	lda     (ptr1),y
+	jsr     _pal_col
+;
+; pal_col(pal_index*4+1, pal_data[1]);
+;
+	ldy     #$00
+	lda     (sp),y
+	asl     a
+	asl     a
+	clc
+	adc     #$01
+	jsr     pusha
+	ldy     #$03
+	lda     (sp),y
+	tax
+	dey
+	lda     (sp),y
+	dey
+	sta     ptr1
+	stx     ptr1+1
+	lda     (ptr1),y
+	jsr     _pal_col
+;
+; pal_col(pal_index*4+2, pal_data[2]);
+;
+	ldy     #$00
+	lda     (sp),y
+	asl     a
+	asl     a
+	clc
+	adc     #$02
+	jsr     pusha
+	ldy     #$03
+	lda     (sp),y
+	tax
+	dey
+	lda     (sp),y
+	sta     ptr1
+	stx     ptr1+1
+	lda     (ptr1),y
+	jsr     _pal_col
+;
+; pal_col(pal_index*4+3, pal_data[3]);
+;
+	ldy     #$00
+	lda     (sp),y
+	asl     a
+	asl     a
+	clc
+	adc     #$03
+	jsr     pusha
+	ldy     #$03
+	lda     (sp),y
+	tax
+	dey
+	lda     (sp),y
+	iny
+	sta     ptr1
+	stx     ptr1+1
+	lda     (ptr1),y
+	jsr     _pal_col
+;
+; }
+;
+	jmp     incsp3
+
+.endproc
+
+; ---------------------------------------------------------------
+; void __near__ get_pad_all (void)
+; ---------------------------------------------------------------
+
+.segment	"CODE"
+
+.proc	_get_pad_all: near
+
+.segment	"CODE"
+
+;
+; pad_state_1 = pad_poll(0);
+;
+	lda     #$00
+	jsr     _pad_poll
+	sta     _pad_state_1
+;
+; pad_new_1 = get_pad_new(0);
+;
+	lda     #$00
+	jsr     _get_pad_new
+	sta     _pad_new_1
+;
+; }
+;
+	rts
+
+.endproc
 
 ; ---------------------------------------------------------------
 ; void __near__ banked_call (unsigned char bankId, void (*method)(void))
@@ -3719,6 +4188,14 @@ L0002:	rts
 .segment	"BANK0"
 
 ;
+; banked_call(0, set_pal_intro);
+;
+	lda     #$00
+	jsr     pusha
+	lda     #<(_set_pal_intro)
+	ldx     #>(_set_pal_intro)
+	jsr     _banked_call
+;
 ; famistudio_music_play(0);
 ;
 	lda     #$00
@@ -3793,24 +4270,19 @@ L0003:	lda     #$04
 ;
 	jsr     _ppu_off
 ;
-; set_chr_mode_2(4);
+; set_chr_mode_3(4);
 ;
 	lda     #$04
-	jsr     _set_chr_mode_2
-;
-; set_chr_mode_3(5);
-;
-	lda     #$05
 	jsr     _set_chr_mode_3
 ;
-; set_chr_mode_4(6);
+; set_chr_mode_4(5);
 ;
-	lda     #$06
+	lda     #$05
 	jsr     _set_chr_mode_4
 ;
-; set_chr_mode_5(7);
+; set_chr_mode_5(6);
 ;
-	lda     #$07
+	lda     #$06
 	jsr     _set_chr_mode_5
 ;
 ; vram_adr(NAMETABLE_A);
@@ -3885,24 +4357,19 @@ L0007:	lda     #$04
 ;
 	jsr     _ppu_off
 ;
-; set_chr_mode_2(8);
+; set_chr_mode_3(7);
 ;
-	lda     #$08
-	jsr     _set_chr_mode_2
-;
-; set_chr_mode_3(9);
-;
-	lda     #$09
+	lda     #$07
 	jsr     _set_chr_mode_3
 ;
-; set_chr_mode_4(10);
+; set_chr_mode_4(8);
 ;
-	lda     #$0A
+	lda     #$08
 	jsr     _set_chr_mode_4
 ;
-; set_chr_mode_5(11);
+; set_chr_mode_5(9);
 ;
-	lda     #$0B
+	lda     #$09
 	jsr     _set_chr_mode_5
 ;
 ; vram_adr(NAMETABLE_A);
@@ -4121,24 +4588,19 @@ L0013:	lda     #$04
 ;
 	jsr     _ppu_off
 ;
-; set_chr_mode_2(12);
+; set_chr_mode_3(10);
 ;
-	lda     #$0C
-	jsr     _set_chr_mode_2
-;
-; set_chr_mode_3(13);
-;
-	lda     #$0D
+	lda     #$0A
 	jsr     _set_chr_mode_3
 ;
-; set_chr_mode_4(14);
+; set_chr_mode_4(11);
 ;
-	lda     #$0E
+	lda     #$0B
 	jsr     _set_chr_mode_4
 ;
-; set_chr_mode_5(15);
+; set_chr_mode_5(12);
 ;
-	lda     #$0F
+	lda     #$0C
 	jsr     _set_chr_mode_5
 ;
 ; vram_adr(NAMETABLE_A);
@@ -4213,24 +4675,24 @@ L0017:	lda     #$04
 ;
 	jsr     _ppu_off
 ;
-; set_chr_mode_2(16);
+; set_chr_mode_2(13);
 ;
-	lda     #$10
+	lda     #$0D
 	jsr     _set_chr_mode_2
 ;
-; set_chr_mode_3(17);
+; set_chr_mode_3(14);
 ;
-	lda     #$11
+	lda     #$0E
 	jsr     _set_chr_mode_3
 ;
-; set_chr_mode_4(18);
+; set_chr_mode_4(15);
 ;
-	lda     #$12
+	lda     #$0F
 	jsr     _set_chr_mode_4
 ;
-; set_chr_mode_5(19);
+; set_chr_mode_5(16);
 ;
-	lda     #$13
+	lda     #$10
 	jsr     _set_chr_mode_5
 ;
 ; vram_adr(NAMETABLE_A);
@@ -4305,24 +4767,24 @@ L001B:	lda     #$04
 ;
 	jsr     _ppu_off
 ;
-; set_chr_mode_2(20);
+; set_chr_mode_2(17);
 ;
-	lda     #$14
+	lda     #$11
 	jsr     _set_chr_mode_2
 ;
-; set_chr_mode_3(21);
+; set_chr_mode_3(18);
 ;
-	lda     #$15
+	lda     #$12
 	jsr     _set_chr_mode_3
 ;
-; set_chr_mode_4(22);
+; set_chr_mode_4(19);
 ;
-	lda     #$16
+	lda     #$13
 	jsr     _set_chr_mode_4
 ;
-; set_chr_mode_5(23);
+; set_chr_mode_5(20);
 ;
-	lda     #$17
+	lda     #$14
 	jsr     _set_chr_mode_5
 ;
 ; vram_adr(NAMETABLE_A);
@@ -4397,24 +4859,24 @@ L001F:	lda     #$04
 ;
 	jsr     _ppu_off
 ;
-; set_chr_mode_2(24);
+; set_chr_mode_2(20);
 ;
-	lda     #$18
+	lda     #$14
 	jsr     _set_chr_mode_2
 ;
-; set_chr_mode_3(25);
+; set_chr_mode_3(21);
 ;
-	lda     #$19
+	lda     #$15
 	jsr     _set_chr_mode_3
 ;
-; set_chr_mode_4(26);
+; set_chr_mode_4(22);
 ;
-	lda     #$1A
+	lda     #$16
 	jsr     _set_chr_mode_4
 ;
-; set_chr_mode_5(27);
+; set_chr_mode_5(23);
 ;
-	lda     #$1B
+	lda     #$17
 	jsr     _set_chr_mode_5
 ;
 ; vram_adr(NAMETABLE_A);
@@ -4498,25 +4960,15 @@ L0023:	lda     #$04
 .segment	"BANK0"
 
 ;
-; set_chr_mode_2(28);
+; set_chr_mode_2(24);
 ;
-	lda     #$1C
+	lda     #$18
 	jsr     _set_chr_mode_2
 ;
-; set_chr_mode_3(29);
+; set_chr_mode_3(25);
 ;
-	lda     #$1D
+	lda     #$19
 	jsr     _set_chr_mode_3
-;
-; set_chr_mode_4(30);
-;
-	lda     #$1E
-	jsr     _set_chr_mode_4
-;
-; set_chr_mode_5(31);
-;
-	lda     #$1F
-	jsr     _set_chr_mode_5
 ;
 ; ppu_off();
 ;
@@ -4605,6 +5057,229 @@ L0003:	rts
 .endproc
 
 ; ---------------------------------------------------------------
+; void __near__ set_frisk (void)
+; ---------------------------------------------------------------
+
+.segment	"BANK1"
+
+.proc	_set_frisk: near
+
+.segment	"BANK1"
+
+;
+; set_chr_mode_0(26);
+;
+	lda     #$1A
+	jsr     _set_chr_mode_0
+;
+; pal_one(frisk_pal, 4);
+;
+	lda     #<(_frisk_pal)
+	ldx     #>(_frisk_pal)
+	jsr     pushax
+	lda     #$04
+	jsr     _pal_one
+;
+; frisk_face = FRISK_FACE_DOWN;
+;
+	lda     #$01
+	sta     _frisk_face
+;
+; }
+;
+	rts
+
+.endproc
+
+; ---------------------------------------------------------------
+; void __near__ update_frisk (void)
+; ---------------------------------------------------------------
+
+.segment	"BANK1"
+
+.proc	_update_frisk: near
+
+.segment	"BANK1"
+
+;
+; oam_meta_spr(frisk_x, frisk_y, frisk_all[frisk_face][frisk_frame]);
+;
+	jsr     decsp2
+	lda     _frisk_x
+	ldy     #$01
+	sta     (sp),y
+	lda     _frisk_y
+	dey
+	sta     (sp),y
+	ldx     #$00
+	lda     _frisk_face
+	asl     a
+	bcc     L000F
+	inx
+	clc
+L000F:	adc     #<(_frisk_all)
+	sta     ptr1
+	txa
+	adc     #>(_frisk_all)
+	sta     ptr1+1
+	iny
+	lda     (ptr1),y
+	tax
+	dey
+	lda     (ptr1),y
+	sta     ptr1
+	stx     ptr1+1
+	ldx     #$00
+	lda     _frisk_frame
+	asl     a
+	bcc     L0010
+	inx
+	clc
+L0010:	adc     ptr1
+	sta     ptr1
+	txa
+	adc     ptr1+1
+	sta     ptr1+1
+	iny
+	lda     (ptr1),y
+	tax
+	dey
+	lda     (ptr1),y
+	jsr     _oam_meta_spr
+;
+; if(pad_state_1 & PAD_UP){
+;
+	lda     _pad_state_1
+	and     #$08
+	beq     L0011
+;
+; frisk_y-=2;
+;
+	lda     _frisk_y
+	sec
+	sbc     #$02
+	sta     _frisk_y
+;
+; frisk_face=FRISK_FACE_UP;
+;
+	lda     #$00
+	sta     _frisk_face
+;
+; if(pad_state_1 & PAD_DOWN){
+;
+L0011:	lda     _pad_state_1
+	and     #$04
+	beq     L0012
+;
+; frisk_y+=2;
+;
+	lda     #$02
+	clc
+	adc     _frisk_y
+	sta     _frisk_y
+;
+; frisk_face=FRISK_FACE_DOWN;
+;
+	lda     #$01
+	sta     _frisk_face
+;
+; if(pad_state_1 & PAD_LEFT){
+;
+L0012:	lda     _pad_state_1
+	and     #$02
+	beq     L0013
+;
+; frisk_x-=2;
+;
+	lda     _frisk_x
+	sec
+	sbc     #$02
+	sta     _frisk_x
+;
+; frisk_face=FRISK_FACE_LEFT;
+;
+	lda     #$02
+	sta     _frisk_face
+;
+; if(pad_state_1 & PAD_RIGHT){
+;
+L0013:	lda     _pad_state_1
+	and     #$01
+	beq     L0014
+;
+; frisk_x+=2;
+;
+	lda     #$02
+	clc
+	adc     _frisk_x
+	sta     _frisk_x
+;
+; frisk_face=FRISK_FACE_RIGHT;
+;
+	lda     #$03
+	sta     _frisk_face
+;
+; if((pad_state_1 & PAD_UP)||(pad_state_1 & PAD_DOWN)||(pad_state_1 & PAD_LEFT)||(pad_state_1 & PAD_RIGHT)){
+;
+L0014:	lda     _pad_state_1
+	and     #$08
+	bne     L0015
+	lda     _pad_state_1
+	and     #$04
+	bne     L0015
+	lda     _pad_state_1
+	and     #$02
+	bne     L0015
+	lda     _pad_state_1
+	and     #$01
+	beq     L0018
+;
+; if(frisk_frame_delay==0){
+;
+L0015:	lda     _frisk_frame_delay
+	bne     L0016
+;
+; ++frisk_frame;
+;
+	inc     _frisk_frame
+;
+; frisk_frame_delay=8;
+;
+	lda     #$08
+	sta     _frisk_frame_delay
+;
+; if(frisk_frame==4)frisk_frame=0;
+;
+	lda     _frisk_frame
+	cmp     #$04
+	bne     L000B
+	lda     #$00
+	sta     _frisk_frame
+;
+; }else --frisk_frame_delay;
+;
+	rts
+L0016:	dec     _frisk_frame_delay
+;
+; }else{
+;
+L000B:	rts
+;
+; frisk_frame = 0;
+;
+L0018:	sta     _frisk_frame
+;
+; frisk_frame_delay = 0;
+;
+	sta     _frisk_frame_delay
+;
+; }
+;
+	rts
+
+.endproc
+
+; ---------------------------------------------------------------
 ; void __near__ main (void)
 ; ---------------------------------------------------------------
 
@@ -4618,14 +5293,6 @@ L0003:	rts
 ; ppu_off();
 ;
 	jsr     _ppu_off
-;
-; banked_call(0, set_pal_intro);
-;
-	lda     #$00
-	jsr     pusha
-	lda     #<(_set_pal_intro)
-	ldx     #>(_set_pal_intro)
-	jsr     _banked_call
 ;
 ; oam_size(1);
 ;
@@ -4656,9 +5323,38 @@ L0003:	rts
 	ldx     #>(_play_title)
 	jsr     _banked_call
 ;
+; banked_call(1, set_frisk);
+;
+	lda     #$01
+	jsr     pusha
+	lda     #<(_set_frisk)
+	ldx     #>(_set_frisk)
+	jsr     _banked_call
+;
+; famistudio_music_play(3);
+;
+	lda     #$03
+	jsr     _famistudio_music_play
+;
 ; oam_clear();
 ;
 L0002:	jsr     _oam_clear
+;
+; get_pad_all();
+;
+	jsr     _get_pad_all
+;
+; banked_call(1, update_frisk);
+;
+	lda     #$01
+	jsr     pusha
+	lda     #<(_update_frisk)
+	ldx     #>(_update_frisk)
+	jsr     _banked_call
+;
+; ppu_wait_nmi();
+;
+	jsr     _ppu_wait_nmi
 ;
 ; ppu_wait_nmi();
 ;

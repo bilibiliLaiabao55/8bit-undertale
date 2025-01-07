@@ -287,7 +287,7 @@ clearRAM:
 	lda #%10000000
 	sta <PPU_CTRL_VAR
 	sta PPU_CTRL		;enable NMI
-	lda #%00000110
+	lda #%00000010
 	sta <PPU_MASK_VAR
 
 waitSync3:
@@ -370,8 +370,6 @@ detectNTSC:
 .segment "BANK12"	
 	.include "MUSIC/music.s"
 	.include "MUSIC/sounds.s"
-
-
 	
 	
 ;.segment "SAMPLES"
@@ -387,8 +385,12 @@ detectNTSC:
 
 
 .segment "CHARS"
-	.incbin "CHR/intro1.chr"
-	.incbin "CHR/intro2.chr"
+	.incbin "CHR/intro.chr"
+	.res 48
+	.res 256
+	.incbin "CHR/title.chr"
+	.res 720
+	.incbin "CHR/spr.chr"
 ; the CHARS segment is much bigger, and I could have 
 ; incbin-ed many more chr files
 	

@@ -243,7 +243,7 @@ FAMISTUDIO_USE_PHASE_RESET = 1
 ; FAMISTUDIO_DPCM_OFF = 0
 ; Memory location of the DPCM samples. Must be between $c000 and $ffc0, and a multiple of 64.
 .ifndef FAMISTUDIO_DPCM_OFF
-    FAMISTUDIO_DPCM_OFF = $c000
+    FAMISTUDIO_DPCM_OFF = __BANK12_RUN__
 .endif
 
 ;======================================================================================================================
@@ -6610,7 +6610,7 @@ famistudio_sfx_clear_channel:
 
 famistudio_sfx_play:
     sta $00
-    lda #$0C
+    lda #SOUND_BANK
     jsr _set_prg_8000
     lda $00
     @effect_data_ptr = famistudio_ptr0
