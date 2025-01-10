@@ -2,6 +2,34 @@
 #include "MMC3/mmc3_code.h"
 #include "MMC3/mmc3_code.c"
 #include "MUSIC/famistudio_cc65.h"
+#pragma bss-name(push, "ZEROPAGE")
+long temp0=0;
+long temp1=0;
+unsigned char pad_state_1;
+unsigned char pad_new_1;
+unsigned char frisk_x;
+unsigned char frisk_y;
+unsigned char frisk_face;
+unsigned char frisk_frame_delay;
+unsigned char frisk_frame;
+#pragma bss-name(pop)
+#pragma bss-name(push, "XRAM")
+// extra RAM at $6000-$7fff
+unsigned char wram_array[0x2000];
+
+#pragma bss-name(pop)
+#pragma rodata-name ("CODE")
+#pragma code-name ("CODE")
+void pal_one(const unsigned char *pal_data, unsigned char pal_index){
+    pal_col(pal_index*4,   pal_data[0]);
+    pal_col(pal_index*4+1, pal_data[1]);
+    pal_col(pal_index*4+2, pal_data[2]);
+    pal_col(pal_index*4+3, pal_data[3]);
+}
+void get_pad_all(){
+    pad_state_1 = pad_poll(0);
+    pad_new_1 = get_pad_new(0);
+}
 #pragma rodata-name ("BANK0")
 #pragma code-name ("BANK0")
 void set_pal_intro(){
@@ -158,14 +186,20 @@ void update_frisk(){
         frisk_frame_delay = 0;
     }
 }
+#pragma rodata-name ("BANK2")
+#pragma code-name ("BANK2")
+void set_bk_tileset(){
+    set_chr_mode_2(0);
+    set_chr_mode_3(1);
+}
 #pragma rodata-name ("CODE")
 #pragma code-name ("CODE")
 void main(){
     //disable_irq(); // This disable irq is for some bug with famistudio engine
     //now this code had move into crt0.s
     ppu_off();
-    oam_size(1);
     ppu_on_all();
+    set_vram_buffer();
     banked_call(0, play_story_cut);
     famistudio_music_stop();
     //for(temp0=60;temp0>0;--temp0)ppu_wait_nmi();
@@ -173,6 +207,7 @@ void main(){
     banked_call(1, set_frisk);
 
     famistudio_music_play(3);
+    banked_call(2, set_bk_tileset);
     while(TRUE){
         oam_clear();
         get_pad_all();

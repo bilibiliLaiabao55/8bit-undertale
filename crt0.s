@@ -287,7 +287,7 @@ clearRAM:
 	lda #%10000000
 	sta <PPU_CTRL_VAR
 	sta PPU_CTRL		;enable NMI
-	lda #%00000010
+	lda #%00000110
 	sta <PPU_MASK_VAR
 
 waitSync3:
@@ -347,6 +347,9 @@ detectNTSC:
 	jsr _pal_bright
 	jsr _pal_clear
 	jsr _oam_clear
+    ; oam_size(1); 
+    lda #1
+    jsr _oam_size
 	jmp _main			;no parameters
 	
 	
@@ -354,10 +357,149 @@ detectNTSC:
 	.include "MMC3/mmc3_code.asm"
 	.include "LIB/neslib.s"
 	.include "LIB/nesdoug.s"
-	
+
+;NMI handler
+
+nmi:
+    pha
+    txa
+    pha
+    tya
+    pha
+    
+    lda #0
+    sta mmc3_index
+    sta irq_done
 
 
+    lda <PPU_MASK_VAR    ;if rendering is disabled, do not access the VRAM at all
+    and #%00011000
+    bne @renderingOn
+    jmp @skipAll
 
+@renderingOn:
+    lda <VRAM_UPDATE ;is the frame complete?
+    bne @doUpdate
+    jmp @skipAll ;skipUpd ***
+
+@doUpdate:
+    lda #0
+    sta <VRAM_UPDATE
+
+    lda #>OAM_BUF        ;update OAM
+    sta PPU_OAM_DMA
+
+    lda <PAL_UPDATE        ;update palette if needed
+    bne @updPal
+    jmp @updVRAM
+
+@updPal:
+
+    ldx #0
+    stx <PAL_UPDATE
+
+    lda #$3f
+    sta PPU_ADDR
+    stx PPU_ADDR
+
+    ldy PAL_BUF                ;background color, remember it in X
+    lda (PAL_BG_PTR),y
+    sta PPU_DATA
+    tax
+    
+    .repeat 3,I
+    ldy PAL_BUF+1+I
+    lda (PAL_BG_PTR),y
+    sta PPU_DATA
+    .endrepeat
+
+    .repeat 3,J        
+    stx PPU_DATA            ;background color
+    .repeat 3,I
+    ldy PAL_BUF+5+(J*4)+I
+    lda (PAL_BG_PTR),y
+    sta PPU_DATA
+    .endrepeat
+    .endrepeat
+
+    .repeat 4,J        
+    stx PPU_DATA            ;background color
+    .repeat 3,I
+    ldy PAL_BUF+17+(J*4)+I
+    lda (PAL_SPR_PTR),y
+    sta PPU_DATA
+    .endrepeat
+    .endrepeat
+
+@updVRAM:
+    
+    lda <NAME_UPD_ENABLE
+    beq @skipUpd
+
+    jsr _flush_vram_update2
+
+@skipUpd:
+
+    lda #0
+    sta PPU_ADDR
+    sta PPU_ADDR
+
+    lda <SCROLL_X
+    sta PPU_SCROLL
+    lda <SCROLL_Y
+    sta PPU_SCROLL
+
+    lda <PPU_CTRL_VAR
+    sta PPU_CTRL
+        
+    jsr irq_parser ; needs to happen inside v-blank... 
+                   ; so goes before the music
+            ; but, if screen is off this should be skipped
+
+@skipAll:
+
+    lda <PPU_MASK_VAR
+    sta PPU_MASK
+
+    inc <FRAME_CNT1
+    inc <FRAME_CNT2
+    lda <FRAME_CNT2
+    cmp #6
+    bne @skipNtsc
+    lda #0
+    sta <FRAME_CNT2
+
+@skipNtsc:
+
+;switch the music into the prg bank first
+    lda #(6 | A12_INVERT)
+    sta $8000
+    lda #SOUND_BANK
+    sta $8001 ;change bank at $8000-9fff
+    jsr famistudio_update
+;if famitone update went long, we could be interrupted
+;by an IRQ below here...
+    
+;push to stack 
+    lda mmc3_8000
+    pha
+;restore prg bank    
+    lda #(6 | A12_INVERT)
+    sta mmc3_8000 ; just in case IRQ interrupts this
+    sta $8000
+    lda BP_BANK_8000
+    sta $8001 
+;pull from stack  
+    pla
+    sta mmc3_8000 ;restore this mmc3 register
+    sta $8000 ;in case we interrupted the main code
+
+    pla
+    tay
+    pla
+    tax
+    pla
+    rti
 	
 
 	

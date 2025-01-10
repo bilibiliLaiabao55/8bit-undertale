@@ -28,5 +28,10 @@ const char story_pal[32] = {
 const unsigned char frisk_pal[]={
     0x0F, 0x06, 0x27, 0x2C
 };
+
+#pragma rodata-name ("BANK2")
+#pragma code-name ("BANK2")
+//void ruins_bck_tile
+
 #pragma rodata-name ("CODE")
 #pragma code-name ("CODE")
