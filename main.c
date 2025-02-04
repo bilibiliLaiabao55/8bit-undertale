@@ -2,6 +2,19 @@
 #include "MMC3/mmc3_code.h"
 #include "MMC3/mmc3_code.c"
 #include "MUSIC/famistudio_cc65.h"
+//bank 0 for intro
+//bank 1 for save data
+//bank 2 for objects like frisk and toriel
+//bank 3 for level update
+//bank 4 for battle
+//bank 5 for cutscencs
+//bank 6 for cutscencs, too
+//bank 7 for shop
+//bank 8 for level music
+//bank 9 for cutscencs music
+//bank 10 for battle music
+//bank 11 for chara music
+//bank 12 for sfx
 #pragma bss-name(push, "ZEROPAGE")
 long temp0=0;
 long temp1=0;
@@ -15,7 +28,7 @@ unsigned char frisk_frame;
 #pragma bss-name(pop)
 #pragma bss-name(push, "XRAM")
 // extra RAM at $6000-$7fff
-unsigned char wram_array[0x2000];
+unsigned char saved;
 
 #pragma bss-name(pop)
 #pragma rodata-name ("CODE")
@@ -36,15 +49,19 @@ void set_pal_intro(){
     pal_clear();
     pal_all(story_pal);
 }
-void play_story_cut(){
-    banked_call(0, set_pal_intro);
+void play_intro(){
+    set_chr_mode_2(0);
+    set_chr_mode_3(1);
+    set_chr_mode_4(2);
+    set_chr_mode_5(3);
     famistudio_music_play(0);
     ppu_off();
     vram_adr(NAMETABLE_A);
     vram_unrle(intro1);
     ppu_wait_nmi();
     ppu_on_all();
-    for(temp0=480;temp0>0;--temp0)ppu_wait_nmi();
+    delay(255);
+    delay(225);
     pal_fade_to(4, 0);
     ppu_off();
     set_chr_mode_3(4);
@@ -55,7 +72,8 @@ void play_story_cut(){
     ppu_wait_nmi();
     ppu_on_all();
     pal_fade_to(0, 4);
-    for(temp0=300;temp0>0;--temp0)ppu_wait_nmi();
+    delay(255);
+    delay(45);
     pal_fade_to(4, 0);
     ppu_off();
     set_chr_mode_3(7);
@@ -66,7 +84,8 @@ void play_story_cut(){
     ppu_wait_nmi();
     ppu_on_all();
     pal_fade_to(0, 4);
-    for(temp0=300;temp0>0;--temp0)ppu_wait_nmi();
+    delay(255);
+    delay(45);
     pal_fade_to(4, 0);
     ppu_off();
     vram_adr(NAMETABLE_A);
@@ -74,7 +93,8 @@ void play_story_cut(){
     ppu_wait_nmi();
     ppu_on_all();
     pal_fade_to(0, 4);
-    for(temp0=300;temp0>0;--temp0)ppu_wait_nmi();
+    delay(255);
+    delay(45);
     pal_fade_to(4, 0);
     ppu_off();
     vram_adr(NAMETABLE_A);
@@ -82,7 +102,8 @@ void play_story_cut(){
     ppu_wait_nmi();
     ppu_on_all();
     pal_fade_to(0, 4);
-    for(temp0=300;temp0>0;--temp0)ppu_wait_nmi();
+    delay(255);
+    delay(45);
     pal_fade_to(4, 0);
     ppu_off();
     set_chr_mode_3(10);
@@ -93,7 +114,8 @@ void play_story_cut(){
     ppu_wait_nmi();
     ppu_on_all();
     pal_fade_to(0, 4);
-    for(temp0=300;temp0>0;--temp0)ppu_wait_nmi();
+    delay(255);
+    delay(45);
     pal_fade_to(4, 0);
     ppu_off();
     set_chr_mode_2(13);
@@ -105,7 +127,8 @@ void play_story_cut(){
     ppu_wait_nmi();
     ppu_on_all();
     pal_fade_to(0, 4);
-    for(temp0=600;temp0>0;--temp0)ppu_wait_nmi();
+    for(temp0=2;temp0>0;--temp0)delay(255);
+    delay(90);
     pal_fade_to(4, 0);
     ppu_off();
     set_chr_mode_2(17);
@@ -117,7 +140,8 @@ void play_story_cut(){
     ppu_wait_nmi();
     ppu_on_all();
     pal_fade_to(0, 4);
-    for(temp0=600;temp0>0;--temp0)ppu_wait_nmi();
+    for(temp0=2;temp0>0;--temp0)delay(255);
+    delay(90);
     pal_fade_to(4, 0);
     ppu_off();
     set_chr_mode_2(20);
@@ -129,25 +153,41 @@ void play_story_cut(){
     ppu_wait_nmi();
     ppu_on_all();
     pal_fade_to(0, 4);
-    for(temp0=1800;temp0>0;--temp0)ppu_wait_nmi();
+    for(temp0=7;temp0>0;--temp0)delay(255);
+    delay(15);
     pal_fade_to(4, 0);
 }
 void play_title(){
-    set_chr_mode_2(24);
-    set_chr_mode_3(25);
-    ppu_off();
-    vram_adr(NAMETABLE_A);
-    vram_unrle(title);
-    ppu_wait_nmi();
-    ppu_on_all();
-    famistudio_sfx_play(0, FAMISTUDIO_SFX_CH0);
-    pal_bright(4);
-    while(TRUE){
-        pad_state_1 = pad_poll(0);
-        pad_new_1 = get_pad_new(0);
-        if((pad_state_1 & PAD_LEFT)&&(pad_state_1 & PAD_UP)&&(pad_state_1 & PAD_B)&&(pad_new_1 & PAD_A))famistudio_sfx_play(1, FAMISTUDIO_SFX_CH0);
-        if(pad_new_1 & PAD_START)break;
+    temp1 = 1;
+    while(temp1 == 1){
+        set_pal_intro();
+        play_intro();
+        famistudio_music_stop();
+        delay(60);
+        set_chr_mode_2(24);
+        set_chr_mode_3(25);
+        ppu_off();
+        vram_adr(NAMETABLE_A);
+        vram_unrle(title);
         ppu_wait_nmi();
+        ppu_on_all();
+        famistudio_sfx_play(0, FAMISTUDIO_SFX_CH0);
+        pal_bright(4);
+        temp0 = 1800;
+        while(temp1 == 1){
+            pad_state_1 = pad_poll(0);
+            pad_new_1 = get_pad_new(0);
+            if((pad_state_1 & PAD_LEFT)&&(pad_state_1 & PAD_UP)&&(pad_state_1 & PAD_B)&&(pad_new_1 & PAD_A)){
+                famistudio_sfx_play(1, FAMISTUDIO_SFX_CH0);
+                temp1 = 1800;
+            }
+            if(pad_new_1 & PAD_START){
+                temp1 = 0;
+            }
+            if(temp0 == 0)break;
+            --temp0;
+            ppu_wait_nmi();
+        }
     }
 }
 #pragma rodata-name ("BANK1")
@@ -197,12 +237,11 @@ void set_bk_tileset(){
 void main(){
     //disable_irq(); // This disable irq is for some bug with famistudio engine
     //now this code had move into crt0.s
+    set_wram_mode(WRAM_ON);
     ppu_off();
     ppu_on_all();
     set_vram_buffer();
-    banked_call(0, play_story_cut);
-    famistudio_music_stop();
-    //for(temp0=60;temp0>0;--temp0)ppu_wait_nmi();
+
     banked_call(0, play_title);
     banked_call(1, set_frisk);
 

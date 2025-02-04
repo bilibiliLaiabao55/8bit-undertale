@@ -326,11 +326,7 @@ detectNTSC:
 	
 	
 ;BANK12
-	
-	lda #SOUND_BANK ;swap the music in place before using
-					;SOUND_BANK is defined above
-	jsr _set_prg_8000
-	
+
 	ldx #<music_data_undertale
 	ldy #>music_data_undertale
 	lda 1
@@ -339,9 +335,7 @@ detectNTSC:
 	ldx #<sounds
 	ldy #>sounds
 	jsr famistudio_sfx_init
-	
-	lda #$00 ;PRG bank #0 at $8000, back to basic
-	jsr _set_prg_8000
+
 	jsr _disable_irq ;disable mmc3 IRQ
 	lda #4
 	jsr _pal_bright
@@ -472,10 +466,6 @@ nmi:
 @skipNtsc:
 
 ;switch the music into the prg bank first
-    lda #(6 | A12_INVERT)
-    sta $8000
-    lda #SOUND_BANK
-    sta $8001 ;change bank at $8000-9fff
     jsr famistudio_update
 ;if famitone update went long, we could be interrupted
 ;by an IRQ below here...
@@ -509,10 +499,10 @@ nmi:
 ; the music code itself is in the regular CODE banks.
 ; It could be moved into BANK12 if music data is small.
 	.include "MUSIC/famistudio_ca65.s"
-.segment "BANK12"	
+
 	.include "MUSIC/music.s"
 	.include "MUSIC/sounds.s"
-	
+.segment "BANK12"	
 	
 ;.segment "SAMPLES"
 ;	.incbin "MUSIC/BassDrum.dmc"

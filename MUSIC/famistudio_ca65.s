@@ -1524,12 +1524,6 @@ ldx #0
 ;======================================================================================================================
 
 famistudio_music_play:
-    ; MMC3 edit
-    ; My sound bank is 12
-    sta $00
-    lda #SOUND_BANK
-    jsr _set_prg_8000
-    lda $00
     @tmp = famistudio_r0
     @song_list_ptr = famistudio_ptr0
     @temp_env_ptr  = famistudio_ptr1
@@ -1763,8 +1757,6 @@ famistudio_music_play:
 .endif
 
 @skip:
-    lda #$00
-    jsr _set_prg_8000
     rts
 ;======================================================================================================================
 ; FAMISTUDIO_MUSIC_PAUSE (public)
@@ -4366,7 +4358,7 @@ famistudio_update:
 
 ;----------------------------------------------------------------------------------------------------------------------
 .if FAMISTUDIO_CFG_SFX_SUPPORT
-
+    
     ; Process all sound effect streams
     .if FAMISTUDIO_CFG_SFX_STREAMS > 0
     ldx #FAMISTUDIO_SFX_CH0
@@ -6610,7 +6602,7 @@ famistudio_sfx_clear_channel:
 
 famistudio_sfx_play:
     sta $00
-    lda #SOUND_BANK
+    lda #$0C
     jsr _set_prg_8000
     lda $00
     @effect_data_ptr = famistudio_ptr0
@@ -7498,4 +7490,3 @@ _famistudio_sfx_play:
 .export _famistudio_sfx_sample_play=famistudio_sfx_sample_play
 .endif
 .endif
-
